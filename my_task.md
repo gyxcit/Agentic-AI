@@ -30,13 +30,14 @@
 - [ ] (optional) Add Recitals / Annex III to the corpus (extend `split_articles()`).
 
 ## 2. Run online / on Colab GPU (needs a key or local Mistral)  🔴
-- [ ] Choose the provider in `.env` — **default: Mistral online** (`LLM_PROVIDER=mistral` +
-      `MISTRAL_API_KEY`). Alternatives: downloaded model on GPU (vLLM), Ollama, OpenAI/Groq.
-      All work with no code change (README "Providers"). Switching verified: mistral / mock / openai-base_url.
-- [ ] Validate the **real cross-encoder** in Colab (`USE_REAL_RERANKER=1`), then freeze the version
-- [ ] Run **RAGAS baseline (TF-IDF) vs final (hybrid+rerank)** on `eval_questions.json`
-      → fill the table in `REPORT.md` §3
-- [ ] Measure over 10 runs: avg cost (USD), avg latency (s), tool-call distribution → `REPORT.md` §3
+- [x] **Real online runs work** — Mistral (paid key) active in `.env`. A burst 429 rate
+      limit is now absorbed by `src/resilience.py` (retry + exponential backoff). Verified:
+      real answer, tool calls, cost ≈ $0.011/run, Self-Consistency 3/3.
+      Fallbacks (vLLM / Ollama / Groq) still available env-only.
+      ⚠️ Synthesis outputs hit `max_tokens=1024` (truncation) — optional: raise it in reasoning.
+- [ ] **Run `eval_ragas_and_runs.ipynb` on Colab (GPU runtime)** — it does everything:
+      real cross-encoder on GPU, RAGAS baseline vs final (Mistral judge + local HF embeddings),
+      and the 10-run cost/latency/tool-distribution. Copy its two printed tables into `REPORT.md` §3.
 
 ## 3. Observability
 - [x] Langfuse tracing implemented (`src/observability.py`, SDK **v4**, best practices).
@@ -44,9 +45,10 @@
       `synthesize-answer` `chain` (k=3 generations) → `critique-answer` `agent`, + 3
       trace scores (self_consistency, groundedness, critic_verdict). **9+ observations/run.**
       No-op without keys. Keys already in `.env`. Verified trace nesting via REST audit.
-- [ ] Capture a **real** trace (real model + token/cost) for the report screenshot.
-      Blocked now by the free **Mistral 429 rate limit** — use Ollama/vLLM on Colab GPU
-      (no limit) or a paid tier, then re-run `python src/agent.py "<question>"`.
+- [x] **Real trace captured** (clean, no duplicates): `mistral-large-latest`, real tokens,
+      14 observations, 3 scores. Duplicate SDK spans suppressed in `observability.py`.
+      Example: `cloud.langfuse.com/.../traces/5f630013708add45ddefb3982239d14d`.
+      → For the report: take a fresh screenshot of any recent trace in the Langfuse UI.
 - [ ] (security) **Rotate the Mistral API key** — it was exposed in a chat session.
 
 ## 4. REPORT.md — fill every `TODO`  🔴

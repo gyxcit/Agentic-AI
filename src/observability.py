@@ -61,6 +61,35 @@ def observation(name: str, as_type: str = "span", **kw):
         return nullcontext(None)
 
 
+def suppress_sdk_tracing() -> None:
+    """Stop the mistralai SDK from emitting its OWN OpenTelemetry spans.
+
+    The SDK auto-instruments when a TracerProvider exists (Langfuse installs one),
+    which would double-represent every call (a `chat_completion_*` generation next
+    to our manual `llm-call`). We force its tracer to NoOp so only our clean, typed
+    observations remain. Fully guarded: a failure here just leaves the duplicates.
+    """
+    try:
+        import sys
+        from opentelemetry.trace import NoOpTracer
+        noop = (False, NoOpTracer())
+        fn = lambda: noop
+        # Force the full mistralai import graph so every importer's binding exists...
+        try:
+            from mistralai import Mistral  # noqa: F401
+        except Exception:
+            pass
+        # ...then overwrite get_or_create_otel_tracer in EVERY module that holds it.
+        for _name, _mod in list(sys.modules.items()):
+            if _name.startswith("mistralai") and hasattr(_mod, "get_or_create_otel_tracer"):
+                try:
+                    setattr(_mod, "get_or_create_otel_tracer", fn)
+                except Exception:
+                    pass
+    except Exception:
+        pass
+
+
 def instrument_llm_clients() -> None:
     """Monkey-patch complete() on both LLM clients to emit a `generation` per call.
 

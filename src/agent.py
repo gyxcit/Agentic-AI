@@ -35,6 +35,7 @@ from guardrails import (
 )
 from reasoning import self_consistent_answer
 import observability as obs
+import resilience
 
 
 # --------------------------------------------------------------------------- #
@@ -147,7 +148,9 @@ def _build_registry() -> ToolRegistry:
 # Main agent loop: L1 -> gated retrieval -> synthesis -> critic  (Langfuse-traced)
 # --------------------------------------------------------------------------- #
 def run(question: str, max_steps: int = 6, verbose: bool = True) -> dict:
-    obs.instrument_llm_clients()
+    resilience.instrument_retries()   # retry-on-429 must wrap the real API call...
+    obs.suppress_sdk_tracing()        # ...silence the SDK's own duplicate spans...
+    obs.instrument_llm_clients()      # ...so only our traced generation spans remain
     budget = TokenBudget(max_usd=2.0)
     tool_calls: dict = {}
 
