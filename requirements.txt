@@ -1,0 +1,13 @@
+# Core — the agent runs from a clean clone with just these (CPU, offline mock ok).
+python-dotenv==1.0.1
+openai==1.54.4
+httpx==0.27.2          # openai 1.54.4 breaks with httpx>=0.28 (removed 'proxies' kwarg)
+mistralai==1.2.3
+mcp==1.1.2
+requests==2.32.3
+nest_asyncio==1.6.0
+langfuse==4.14.1
+
+# GPU / evaluation extras (real cross-encoder, RAGAS) are in requirements-gpu.txt
+# so a clean clone does not have to pull torch. Install them only on a GPU box:
+#   pip install -r requirements-gpu.txt

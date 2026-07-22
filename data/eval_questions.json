@@ -1,0 +1,23 @@
+{
+  "questions": [
+    "What are the principles relating to processing of personal data under the GDPR?",
+    "What is the right to erasure ('right to be forgotten')?",
+    "What is the maximum administrative fine under the GDPR?",
+    "Which artificial intelligence practices are prohibited under the AI Act?",
+    "How are high-risk AI systems classified under the AI Act?"
+  ],
+  "gold_doc": [
+    "gdpr_art_5",
+    "gdpr_art_17",
+    "gdpr_art_83",
+    "aiact_art_5",
+    "aiact_art_6"
+  ],
+  "ground_truth": [
+    "Lawfulness, fairness and transparency; purpose limitation; data minimisation; accuracy; storage limitation; integrity and confidentiality; and accountability",
+    "The data subject has the right to obtain from the controller the erasure of personal data concerning them without undue delay",
+    "Up to 20 000 000 EUR, or up to 4% of the total worldwide annual turnover of the preceding financial year, whichever is higher",
+    "Practices such as subliminal manipulation, exploiting vulnerabilities, social scoring, and certain uses of biometric identification",
+    "By the criteria in Article 6 together with the use cases listed in Annex III"
+  ]
+}

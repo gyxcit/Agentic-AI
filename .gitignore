@@ -218,3 +218,9 @@ __marimo__/
 .streamlit/secrets.toml
 
 filestructure.txt
+
+# Project-specific
+.secrets
+*.safetensors
+*.bin
+data/raw/

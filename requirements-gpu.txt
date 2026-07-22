@@ -1,0 +1,19 @@
+# GPU / evaluation extras — install on a machine with a GPU (e.g. Colab gpu_colab).
+#   pip install -r requirements.txt -r requirements-gpu.txt
+#
+# Real cross-encoder reranking (Block 1) — set USE_REAL_RERANKER=1 to activate.
+sentence-transformers==3.3.1
+torch>=2.2
+
+# RAGAS evaluation (Block 1 §6b) — pinned to known-compatible versions.
+ragas==0.1.21
+langchain==0.2.16
+langchain-community==0.2.16
+langchain-openai==0.1.25
+datasets==2.21.0
+
+# Corpus ingestion (scripts/build_corpus.py) — extract text from docs/*.pdf.
+pypdf==5.1.0
+
+# Optional: serve an open-source Mistral locally with an OpenAI-compatible API.
+# vllm==0.6.3
